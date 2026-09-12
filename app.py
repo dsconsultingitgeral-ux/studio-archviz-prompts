@@ -35,7 +35,7 @@ st.sidebar.markdown("Copia estes modelos predefinidos para realizar a análise n
 
 PROMPT_ANALISE_RIGOROSA = """Atua como Fotógrafo Principal de Arquitetura e Diretor Técnico de ArchViz. Realiza uma análise arquitetónica meticulosa e ultra-detalhada desta imagem para criar uma base estrutural inalterável.
 
-Analisa e especifica os seguintes parâmetros em termos técnicos de arquitetura (em inglês):
+Analisa e especifica os seguintes parâmetros em termos técnicos de arquitetura (em português):
 
 1. ESPECIFICAÇÕES DE CÂMARA E BLOQUEIO DE PERSPETIVA:
    - Altura da câmara (nível dos olhos, drone, ângulo baixo).
@@ -110,11 +110,11 @@ with c3:
 # 4. ENGENHARIA DE PROMPTS DO GROQ (SISTEMA DINÂMICO DE MODELOS)
 # -----------------------------------------------------------------------------
 SYSTEM_PROMPT_ENGINE = f"""
-És o Engenheiro Principal de Prompts de Arquitetura e ArchViz do mundo. O teu único objetivo é construir um prompt final expandido, ultra-detalhado e técnico em INGLÊS.
+És o Engenheiro Principal de Prompts de Arquitetura e ArchViz do mundo. O teu único objetivo é construir um prompt final expandido, ultra-detalhado e técnico em PORTUGUÊS.
 
 O prompt gerado DEVE FORÇAR os geradores de imagem de IA (Gemini, Midjourney v6, Stable Diffusion XL) a manter um BLOQUEIO ESTRUTURAL RÍGIDO na imagem de referência original, alterando APENAS os materiais de superfície, texturas e iluminação especificados.
 
-ESTRUTURA OBRIGATÓRIA DO PROMPT GERADO (DEVOLVE APENAS O PROMPT FINAL EM INGLÊS):
+ESTRUTURA OBRIGATÓRIA DO PROMPT GERADO (DEVOLVE APENAS O PROMPT FINAL EM PORTUGUÊS):
 
 SECÇÃO 1: BLOQUEIO RÍGIDO DE GEOMETRIA E CÂMARA (INÍCIO OBRIGATÓRIO)
 - Escreve um comando explícito de preservação: "STRICT REFERENCE LOCK: Preserve 100% of the reference image's architectural geometry, building massing, spatial layout, 2-point perspective, camera focal length (24mm tilt-shift), horizon line, and exact structural outline. Do not alter building dimensions, window placements, or volume boundaries."
