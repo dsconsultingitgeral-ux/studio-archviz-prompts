@@ -1,7 +1,7 @@
 import streamlit as st
 from groq import Groq
 
-# Configuração inicial da página
+# Configuração da página no Streamlit
 st.set_page_config(
     page_title="Studio ArchViz — Motor de Prompts",
     page_icon="🏛️",
@@ -107,7 +107,7 @@ with c3:
     ])
 
 # -----------------------------------------------------------------------------
-# 4. ENGENHARIA DE PROMPTS DO GROQ (SISTEMA DE FUSÃO)
+# 4. ENGENHARIA DE PROMPTS DO GROQ (SISTEMA DE FUSÃO COM FALLBACK)
 # -----------------------------------------------------------------------------
 SYSTEM_PROMPT_ENGINE = f"""
 És o Engenheiro Principal de Prompts de Arquitetura e ArchViz do mundo. O teu único objetivo é construir um prompt final expandido, ultra-detalhado e técnico em INGLÊS.
@@ -145,20 +145,38 @@ if st.button("🚀 Gerar Master Prompt de Transformação", type="primary"):
         with st.spinner("A sintetizar o Master Prompt no Groq..."):
             prompt_input = f"GEOMETRIA BASE:\n{descricao_original}\n\nALTERAÇÕES SOLICITADAS:\n{novas_alteracoes}"
             
-            completion = client.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT_ENGINE},
-                    {"role": "user", "content": prompt_input}
-                ],
-                model="llama-3.3-70b-versatile",
-                temperature=0.15,
-            )
+            # Lista de modelos por ordem de preferência (Garante funcionalidade mesmo se um falhar)
+            modelos_para_testar = [
+                "llama-3.3-70b-versatile",
+                "llama-3.1-8b-instant",
+                "mixtral-8x7b-32768"
+            ]
             
-            master_prompt = completion.choices[0].message.content
+            master_prompt = None
+            erro_ultimo = None
             
-            st.success("Master Prompt Gerado com Sucesso!")
-            st.text_area(
-                "Copia o Master Prompt abaixo. No Gemini, anexa a foto original e cola este texto:",
-                value=master_prompt,
-                height=280
-            )
+            for modelo in modelos_para_testar:
+                try:
+                    completion = client.chat.completions.create(
+                        messages=[
+                            {"role": "system", "content": SYSTEM_PROMPT_ENGINE},
+                            {"role": "user", "content": prompt_input}
+                        ],
+                        model=modelo,
+                        temperature=0.15,
+                    )
+                    master_prompt = completion.choices[0].message.content
+                    break  # Conseguiu resposta, sai do loop
+                except Exception as e:
+                    erro_ultimo = e
+                    continue  # Tenta o próximo modelo da lista
+            
+            if master_prompt:
+                st.success("Master Prompt Gerado com Sucesso!")
+                st.text_area(
+                    "Copia o Master Prompt abaixo. No Gemini, anexa a foto original e cola este texto:",
+                    value=master_prompt,
+                    height=280
+                )
+            else:
+                st.error(f"Erro ao comunicar com o Groq: {erro_ultimo}")
