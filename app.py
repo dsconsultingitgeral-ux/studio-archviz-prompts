@@ -76,7 +76,7 @@ with col1:
     descricao_original = st.text_area(
         "Cola a análise técnica obtida na Fase 1 (do Gemini):",
         height=220,
-        placeholder="Exemplo: A two-story minimalist residence shot with a 24mm tilt-shift lens in 2-point perspective. The building features a ground-floor cantilevered volume over a recessed glass curtain wall..."
+        placeholder="Exemplo: Residência minimalista de dois pisos fotografada com lente tilt-shift de 24mm em perspetiva de 2 pontos. O edifício apresenta um volume em consola no piso térreo sobre uma fachada cortina de vidro..."
     )
 
 with col2:
@@ -107,7 +107,7 @@ with c3:
     ])
 
 # -----------------------------------------------------------------------------
-# 4. ENGENHARIA DE PROMPTS DO GROQ (SISTEMA DINÂMICO DE MODELOS)
+# 4. ENGENHARIA DE PROMPTS DO GROQ (GERAÇÃO EM PORTUGUÊS)
 # -----------------------------------------------------------------------------
 SYSTEM_PROMPT_ENGINE = f"""
 És o Engenheiro Principal de Prompts de Arquitetura e ArchViz do mundo. O teu único objetivo é construir um prompt final expandido, ultra-detalhado e técnico em PORTUGUÊS.
@@ -117,15 +117,15 @@ O prompt gerado DEVE FORÇAR os geradores de imagem de IA (Gemini, Midjourney v6
 ESTRUTURA OBRIGATÓRIA DO PROMPT GERADO (DEVOLVE APENAS O PROMPT FINAL EM PORTUGUÊS):
 
 SECÇÃO 1: BLOQUEIO RÍGIDO DE GEOMETRIA E CÂMARA (INÍCIO OBRIGATÓRIO)
-- Escreve um comando explícito de preservação: "STRICT REFERENCE LOCK: Preserve 100% of the reference image's architectural geometry, building massing, spatial layout, 2-point perspective, camera focal length (24mm tilt-shift), horizon line, and exact structural outline. Do not alter building dimensions, window placements, or volume boundaries."
+- Escreve um comando explícito de preservação: "BLOQUEIO RÍGIDO DE REFERÊNCIA: Preserva 100% da geometria arquitetónica da imagem de referência, volumetria do edifício, disposição espacial, perspetiva de 2 pontos, distância focal da câmara (24mm tilt-shift), linha do horizonte e contornos estruturais exatos. Não alteres as dimensões do edifício, posicionamento de janelas ou limites volumétricos."
 
 SECÇÃO 2: RECONSTRUÇÃO DA BASE ESTRUTURAL
 - Integra a descrição técnica fornecida pelo utilizador, reforçando os elementos estruturais principais, níveis dos pisos e alinhamentos.
 
-SECÇÃO 3: TRANSFORMAÇÃO TÉCNICA DE MATERIAIS
-- Traduz os pedidos de alteração do utilizador em especificações precisas de materiais ArchViz PBR (Physically Based Rendering):
-  * Especifica os tipos exatos de materiais (ex.: "clean off-white smooth render", "traditional terracotta roof tiles restored", "modern minimal black aluminium window frames").
-  * Detalha caixilharia, juntas de dilatação e transições entre materiais.
+SECÇÃO 3: TRANSFORMAÇÃO TÉCNICA DE MATERIAIS & LIMPEZA DE FACHADA
+- Traduz os pedidos de alteração do utilizador em especificações precisas de materiais ArchViz PBR (Physically Based Rendering) em português.
+- REGRA CRÍTICA DE RESTAURAÇÃO: Escreve explicitamente: "APLICAÇÃO DE SUPERFÍCIES TOTALMENTE NOVAS: Remove todas as fissuras existentes nas paredes, manchas, desgaste do tempo, humidade, eflorescências e imperfeições de superfície da imagem original. Aplica um estuque imaculado, impecável, completamente liso e recém-pintado de bege/branco claro em todas as paredes exteriores, com textura uniforme e zero imperfeições."
+- Detalha caixilharia, juntas de dilatação e transições entre materiais.
 
 SECÇÃO 4: MOTOR DE ILUMINAÇÃO E ATMOSFERA
 - Aplica o estilo selecionado: {estilo_render}.
@@ -133,7 +133,7 @@ SECÇÃO 4: MOTOR DE ILUMINAÇÃO E ATMOSFERA
 
 SECÇÃO 5: PARÂMETROS DE PRODUÇÃO ARCHVIZ
 - Motor selecionado: {qualidade_motor}.
-- Finaliza com termos de qualidade: "Architectural Digest featured project, 8k resolution, razor-sharp focus, architectural photorealism, perfectly vertical architectural lines, PBR material maps, zero structural deviation."
+- Finaliza com termos de qualidade: "Projeto destacado na Architectural Digest, resolução 8k, foco ultra-nítido, fotorrealismo arquitetónico, linhas arquitetónicas perfeitamente verticais, mapas de materiais PBR, acabamento de reboco impecável, zero desvio estrutural."
 
 Gera um bloco único de texto contínuo, sem introduções nem conclusões conversacionais.
 """
@@ -142,7 +142,7 @@ if st.button("🚀 Gerar Master Prompt de Transformação", type="primary"):
     if not descricao_original or not novas_alteracoes:
         st.warning("Preenche a descrição original e as alterações pretendidas antes de gerar.")
     else:
-        with st.spinner("A consultar o Groq e a gerar o Master Prompt..."):
+        with st.spinner("A consultar o Groq e a gerar o Master Prompt em Português..."):
             prompt_input = f"GEOMETRIA BASE:\n{descricao_original}\n\nALTERAÇÕES SOLICITADAS:\n{novas_alteracoes}"
             
             master_prompt = None
