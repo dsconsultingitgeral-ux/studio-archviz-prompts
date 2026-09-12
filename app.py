@@ -8,7 +8,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilização visual minimalista
+# Estilização visual da aplicação
 st.markdown("""
 <style>
     .main-header { font-size: 2.2rem; font-weight: 700; color: #1E293B; margin-bottom: 0.2rem; }
@@ -84,7 +84,7 @@ with col2:
     novas_alteracoes = st.text_area(
         "Especifica os novos materiais, iluminação e acabamentos pretendidos:",
         height=220,
-        placeholder="Exemplo: Substituir o acabamento de betão por ripas verticais de madeira Shou Sugi Ban (madeira queimada), alterar os caixilhos para alumínio anodizado bronze escuro, aplicar iluminação de acentuação 2700K sob as palas..."
+        placeholder="Exemplo: Pintar tudo de branco ou bege claro, recuperar o telhado mantendo a telha tradicional, trocar janelas e portas por caixilharia simples moderna, relva e gravilha no jardim..."
     )
 
 # Opções de afinação técnica
@@ -107,7 +107,7 @@ with c3:
     ])
 
 # -----------------------------------------------------------------------------
-# 4. ENGENHARIA DE PROMPTS DO GROQ (SISTEMA DE FUSÃO COM FALLBACK)
+# 4. ENGENHARIA DE PROMPTS DO GROQ (SISTEMA DE FUSÃO COM MODELOS ATIVOS)
 # -----------------------------------------------------------------------------
 SYSTEM_PROMPT_ENGINE = f"""
 És o Engenheiro Principal de Prompts de Arquitetura e ArchViz do mundo. O teu único objetivo é construir um prompt final expandido, ultra-detalhado e técnico em INGLÊS.
@@ -124,7 +124,7 @@ SECÇÃO 2: RECONSTRUÇÃO DA BASE ESTRUTURAL
 
 SECÇÃO 3: TRANSFORMAÇÃO TÉCNICA DE MATERIAIS
 - Traduz os pedidos de alteração do utilizador em especificações precisas de materiais ArchViz PBR (Physically Based Rendering):
-  * Especifica os tipos exatos de materiais (ex.: "charred Shou Sugi Ban timber cladding with visible char grain", "honed architectural white concrete", "low-iron ultra-clear triple-glazed glass").
+  * Especifica os tipos exatos de materiais (ex.: "clean off-white smooth render", "traditional terracotta roof tiles restored", "modern minimal black aluminium window frames").
   * Detalha caixilharia, juntas de dilatação e transições entre materiais.
 
 SECÇÃO 4: MOTOR DE ILUMINAÇÃO E ATMOSFERA
@@ -145,17 +145,16 @@ if st.button("🚀 Gerar Master Prompt de Transformação", type="primary"):
         with st.spinner("A sintetizar o Master Prompt no Groq..."):
             prompt_input = f"GEOMETRIA BASE:\n{descricao_original}\n\nALTERAÇÕES SOLICITADAS:\n{novas_alteracoes}"
             
-            # Lista de modelos por ordem de preferência (Garante funcionalidade mesmo se um falhar)
-            modelos_para_testar = [
+            # APENAS modelos 100% ATIVOS e ATUALIZADOS na plataforma do Groq
+            modelos_validos = [
                 "llama-3.3-70b-versatile",
-                "llama-3.1-8b-instant",
-                "mixtral-8x7b-32768"
+                "llama-3.1-8b-instant"
             ]
             
             master_prompt = None
-            erro_ultimo = None
+            erro_detalhado = None
             
-            for modelo in modelos_para_testar:
+            for modelo in modelos_validos:
                 try:
                     completion = client.chat.completions.create(
                         messages=[
@@ -166,10 +165,10 @@ if st.button("🚀 Gerar Master Prompt de Transformação", type="primary"):
                         temperature=0.15,
                     )
                     master_prompt = completion.choices[0].message.content
-                    break  # Conseguiu resposta, sai do loop
+                    break
                 except Exception as e:
-                    erro_ultimo = e
-                    continue  # Tenta o próximo modelo da lista
+                    erro_detalhado = e
+                    continue
             
             if master_prompt:
                 st.success("Master Prompt Gerado com Sucesso!")
@@ -179,4 +178,4 @@ if st.button("🚀 Gerar Master Prompt de Transformação", type="primary"):
                     height=280
                 )
             else:
-                st.error(f"Erro ao comunicar com o Groq: {erro_ultimo}")
+                st.error(f"Erro na ligação ao Groq: {erro_detalhado}")
